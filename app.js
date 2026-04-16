@@ -4,31 +4,38 @@ const QUESTION_DEFS = [
   {
     id: "age",
     type: "age",
-    number: "Q1",
     title: "今、何歳ですか？",
-    subtitle: "MVPでは 7歳以上を対象にしています。年齢は年単位で入力してください。",
+    subtitle: "年齢は年単位で入力してください。入力後に「次へ」で進みます。",
+  },
+  {
+    id: "current",
+    type: "choice",
+    title: "今の普段の食生活では、パンをどれくらい食べますか？",
+    subtitle: "まずは今の頻度を基準にします。だいたいの体感で大丈夫です。",
+    options: [
+      { value: "rare", label: "ほぼ食べない", sub: "かなり控えめ", icon: "🍚" },
+      { value: "light", label: "週1〜2回くらい", sub: "たまに食べる", icon: "🍞" },
+      { value: "medium", label: "週3〜5回くらい", sub: "わりと身近", icon: "🥐" },
+      { value: "heavy", label: "かなりよく食べる", sub: "パン高頻度", icon: "🥯" },
+    ],
   },
   {
     id: "childhood",
     type: "choice",
-    number: "Q2",
     title: "小学生くらいのころ、パンはどれくらい食べていましたか？",
-    subtitle: "6〜12歳ごろの朝食や給食以外の軽食も含めた感覚で大丈夫です。",
-    minAge: 7,
+    subtitle: "6〜12歳ごろの朝食や軽食も含めた感覚で選んでください。",
     options: [
-      { value: "rare", label: "ほぼ食べなかった", sub: "かなりごはん派", icon: "🍚" },
+      { value: "rare", label: "ほぼ食べなかった", sub: "ごはん寄り", icon: "🍚" },
       { value: "light", label: "週1〜2回くらい", sub: "たまに食べる", icon: "🍞" },
-      { value: "medium", label: "週3〜5回くらい", sub: "わりと身近だった", icon: "🥐" },
-      { value: "heavy", label: "かなりよく食べていた", sub: "パン多めの時期", icon: "🥪" },
+      { value: "medium", label: "週3〜5回くらい", sub: "わりと食べていた", icon: "🥐" },
+      { value: "heavy", label: "かなりよく食べていた", sub: "しっかりパン期", icon: "🥪" },
     ],
   },
   {
     id: "teen",
     type: "choice",
-    number: "Q3",
     title: "中高生くらいのころ、パンはどれくらい食べていましたか？",
-    subtitle: "購買のパンや昼食の軽食も含めて、週あたりの体感で選んでください。",
-    minAge: 13,
+    subtitle: "購買や昼食の軽食も含めた、週あたりの体感で選んでください。",
     options: [
       { value: "rare", label: "ほぼ食べなかった", sub: "ごはん中心", icon: "🍚" },
       { value: "light", label: "週1〜2回くらい", sub: "たまに食べる", icon: "🍞" },
@@ -39,10 +46,8 @@ const QUESTION_DEFS = [
   {
     id: "youngAdult",
     type: "choice",
-    number: "Q4",
     title: "19〜25歳くらいのころ、パンはどれくらい食べていましたか？",
     subtitle: "朝食、ランチ、軽食をまとめたざっくりの感覚で大丈夫です。",
-    minAge: 19,
     options: [
       { value: "rare", label: "ほぼ食べなかった", sub: "かなり控えめ", icon: "🍚" },
       { value: "light", label: "週1〜2回くらい", sub: "たまに食べる", icon: "🍞" },
@@ -53,10 +58,8 @@ const QUESTION_DEFS = [
   {
     id: "adult",
     type: "choice",
-    number: "Q5",
     title: "26歳以降、今に近い食生活ではパンをどれくらい食べていますか？",
-    subtitle: "今の傾向にいちばん近いものを選んでください。",
-    minAge: 26,
+    subtitle: "今の傾向にいちばん近い、26歳以降の頻度を選んでください。",
     options: [
       { value: "rare", label: "ほぼ食べない", sub: "かなり控えめ", icon: "🍚" },
       { value: "light", label: "週1〜2回くらい", sub: "たまに食べる", icon: "🍞" },
@@ -67,10 +70,8 @@ const QUESTION_DEFS = [
   {
     id: "sandwich",
     type: "choice",
-    number: "Q6",
     title: "最近、サンドイッチ・惣菜パン・菓子パンはどれくらい食べますか？",
-    subtitle: "補正として扱います。最近の体感に近いものを選んでください。",
-    minAge: 7,
+    subtitle: "最近寄りの補正として使います。深く考えず体感で選んでください。",
     options: [
       { value: "rare", label: "ほぼ食べない", sub: "補正なし", icon: "🍽️" },
       { value: "light", label: "たまに食べる", sub: "軽め補正", icon: "🥪" },
@@ -80,10 +81,8 @@ const QUESTION_DEFS = [
   {
     id: "burger",
     type: "choice",
-    number: "Q7",
     title: "最近、バーガー・ホットドッグ系はどれくらい食べますか？",
-    subtitle: "たまのファストフードも含めた体感で選んでください。",
-    minAge: 7,
+    subtitle: "最近の体感で選んでください。たまのファストフードも含めて大丈夫です。",
     options: [
       { value: "rare", label: "ほぼ食べない", sub: "補正なし", icon: "🥗" },
       { value: "light", label: "たまに食べる", sub: "軽め補正", icon: "🍔" },
@@ -93,10 +92,10 @@ const QUESTION_DEFS = [
 ];
 
 const PERIODS = [
-  { id: "childhood", label: "6〜12歳", from: 6, to: 12 },
-  { id: "teen", label: "13〜18歳", from: 13, to: 18 },
-  { id: "youngAdult", label: "19〜25歳", from: 19, to: 25 },
-  { id: "adult", label: "26歳以降", from: 26, to: null },
+  { id: "childhood", label: "小学生くらい", rangeLabel: "6〜12歳", from: 6, to: 12 },
+  { id: "teen", label: "中高生くらい", rangeLabel: "13〜18歳", from: 13, to: 18 },
+  { id: "youngAdult", label: "19〜25歳くらい", rangeLabel: "19〜25歳", from: 19, to: 25 },
+  { id: "adult", label: "26歳以降", rangeLabel: "26歳〜現在", from: 26, to: null },
 ];
 
 const WEEKLY_VALUES = {
@@ -132,6 +131,7 @@ const DEFAULT_STATE = {
   questionIndex: 0,
   answers: {
     age: "",
+    current: "",
     childhood: "",
     teen: "",
     youngAdult: "",
@@ -139,7 +139,7 @@ const DEFAULT_STATE = {
     sandwich: "",
     burger: "",
   },
-  visibleQuestionIds: ["age", "childhood", "sandwich", "burger"],
+  visibleQuestionIds: ["age", "current", "sandwich", "burger"],
   estimate: null,
   futureCount: 0,
   history: [],
@@ -149,9 +149,12 @@ const DEFAULT_STATE = {
   loadingEstimate: false,
   ui: {
     ageError: "",
+    ageDraft: "",
     openAccordion: "",
   },
 };
+
+let autoAdvanceTimer = null;
 
 const appState = typeof window !== "undefined" ? safeLoadState() : structuredClone(DEFAULT_STATE);
 
@@ -160,30 +163,50 @@ function safeLoadState() {
   if (typeof window === "undefined") {
     return fallback;
   }
+
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     if (!raw) {
       return fallback;
     }
+
     const parsed = JSON.parse(raw);
-    const answers = { ...fallback.answers, ...(parsed.answers || {}) };
-    const state = {
+    const storedAnswers = parsed.answers || {};
+    const answers = {
+      ...fallback.answers,
+      ...storedAnswers,
+      current: storedAnswers.current || storedAnswers.adult || storedAnswers.childhood || "",
+    };
+
+    const currentScreen = aliasScreen(parsed.currentScreen);
+    const lastCompletedScreen = aliasScreen(parsed.lastCompletedScreen);
+    const age = parseAge(answers.age) ?? 0;
+    const visibleQuestionIds = getVisibleQuestionIds(age);
+
+    return {
       ...fallback,
       ...parsed,
+      currentScreen: sanitizeScreen(currentScreen, { ...fallback, estimate: parsed.estimate }),
+      lastCompletedScreen: sanitizeScreen(lastCompletedScreen, { ...fallback, estimate: parsed.estimate }),
       answers,
-      ui: { ...fallback.ui, ...(parsed.ui || {}) },
+      visibleQuestionIds,
+      hasSavedData: Boolean(parsed.estimate || parsed.futureCount || parsed.history?.length || hasAnyAnswer(answers)),
       toasts: [],
       loadingEstimate: false,
+      ui: {
+        ...fallback.ui,
+        ...(parsed.ui || {}),
+        ageDraft: answers.age || "",
+      },
     };
-    state.visibleQuestionIds = getVisibleQuestionIds(Number.parseInt(answers.age, 10) || 0);
-    state.hasSavedData = Boolean(parsed.estimate || parsed.futureCount || hasAnyAnswer(answers));
-    state.currentScreen = sanitizeScreen(state.currentScreen, state);
-    state.lastCompletedScreen = sanitizeScreen(state.lastCompletedScreen, state);
-    return state;
   } catch (_error) {
     window.localStorage.removeItem(STORAGE_KEY);
     return fallback;
   }
+}
+
+function aliasScreen(screen) {
+  return screen === "counter" ? "records" : screen;
 }
 
 function makeId() {
@@ -197,7 +220,7 @@ function sanitizeScreen(screen, state) {
   const available = new Set(["home", "questions", "loading"]);
   if (state.estimate) {
     available.add("result");
-    available.add("counter");
+    available.add("records");
     available.add("settings");
   }
   return available.has(screen) ? screen : "home";
@@ -214,11 +237,12 @@ function persistState() {
     futureCount: appState.futureCount,
     history: appState.history,
     updatedAt: appState.updatedAt,
-    hasSavedData: Boolean(appState.estimate || appState.futureCount || hasAnyAnswer(appState.answers)),
+    hasSavedData: Boolean(appState.estimate || appState.futureCount || appState.history.length || hasAnyAnswer(appState.answers)),
     ui: {
       openAccordion: appState.ui.openAccordion,
     },
   };
+
   try {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   } catch (_error) {
@@ -230,8 +254,20 @@ function hasAnyAnswer(answers) {
   return Object.values(answers).some(Boolean);
 }
 
+function parseAge(value) {
+  const parsed = Number.parseInt(String(value ?? ""), 10);
+  if (!Number.isFinite(parsed)) {
+    return null;
+  }
+  return Math.max(0, parsed);
+}
+
+function sanitizeAgeDraft(value) {
+  return String(value ?? "").replace(/[^\d]/g, "").slice(0, 3);
+}
+
 function getVisibleQuestionIds(age) {
-  const ids = ["age"];
+  const ids = ["age", "current"];
   if (age >= 7) {
     ids.push("childhood");
   }
@@ -244,9 +280,7 @@ function getVisibleQuestionIds(age) {
   if (age >= 26) {
     ids.push("adult");
   }
-  if (age >= 7) {
-    ids.push("sandwich", "burger");
-  }
+  ids.push("sandwich", "burger");
   return ids;
 }
 
@@ -267,7 +301,8 @@ function clampQuestionIndex() {
 }
 
 function setScreen(screen) {
-  appState.currentScreen = sanitizeScreen(screen, appState);
+  clearPendingAutoAdvance();
+  appState.currentScreen = sanitizeScreen(aliasScreen(screen), appState);
   if (screen !== "loading") {
     appState.lastCompletedScreen = appState.currentScreen;
   }
@@ -275,52 +310,106 @@ function setScreen(screen) {
   render();
 }
 
-function updateAge(value) {
-  const digits = value.replace(/[^\d]/g, "").slice(0, 3);
+function beginEstimateFlow() {
+  clearPendingAutoAdvance();
+  appState.currentScreen = "questions";
+  appState.lastCompletedScreen = "questions";
+  appState.questionIndex = 0;
+  appState.ui.ageError = "";
+  appState.ui.ageDraft = appState.answers.age || "";
+  persistState();
+  render();
+  focusAgeInput();
+}
+
+function updateAgeDraft(value, input) {
+  const digits = sanitizeAgeDraft(value);
+  appState.ui.ageDraft = digits;
+  appState.ui.ageError = "";
+
+  if (input && input.value !== digits) {
+    input.value = digits;
+  }
+
+  const error = document.querySelector("[data-role='age-error']");
+  if (error) {
+    error.textContent = "";
+    error.hidden = true;
+  }
+}
+
+function commitAgeDraft() {
+  const digits = sanitizeAgeDraft(appState.ui.ageDraft);
+  const age = parseAge(digits);
+  if (age === null) {
+    appState.ui.ageError = "年齢を入力してください";
+    render();
+    focusAgeInput();
+    return null;
+  }
+
   appState.answers.age = digits;
-  const age = Number.parseInt(digits, 10) || 0;
+  appState.ui.ageDraft = digits;
   appState.visibleQuestionIds = getVisibleQuestionIds(age);
   clampQuestionIndex();
   appState.ui.ageError = "";
   appState.updatedAt = new Date().toISOString();
   persistState();
-  render();
+  return age;
 }
 
-function answerQuestion(questionId, value) {
+function answerQuestion(questionId, value, { autoAdvance = false } = {}) {
+  clearPendingAutoAdvance();
   appState.answers[questionId] = value;
   appState.updatedAt = new Date().toISOString();
   persistState();
   render();
+
+  if (autoAdvance) {
+    scheduleAutoAdvance(questionId, value);
+  }
 }
 
-function goToQuestion(index) {
-  appState.questionIndex = index;
-  clampQuestionIndex();
-  appState.currentScreen = "questions";
-  persistState();
-  render();
+function scheduleAutoAdvance(questionId, value) {
+  if (typeof window === "undefined") {
+    return;
+  }
+  autoAdvanceTimer = window.setTimeout(() => {
+    autoAdvanceTimer = null;
+    const currentQuestion = getVisibleQuestions()[appState.questionIndex];
+    if (
+      appState.currentScreen !== "questions" ||
+      !currentQuestion ||
+      currentQuestion.id !== questionId ||
+      appState.answers[questionId] !== value
+    ) {
+      return;
+    }
+    handleQuestionNext();
+  }, 180);
+}
+
+function clearPendingAutoAdvance() {
+  if (autoAdvanceTimer) {
+    window.clearTimeout(autoAdvanceTimer);
+    autoAdvanceTimer = null;
+  }
 }
 
 function handleQuestionNext() {
-  const visibleQuestions = getVisibleQuestions();
+  clearPendingAutoAdvance();
+  let visibleQuestions = getVisibleQuestions();
   const question = visibleQuestions[appState.questionIndex];
   if (!question) {
     return;
   }
+
   if (question.id === "age") {
-    const age = Number.parseInt(appState.answers.age, 10);
-    if (!Number.isFinite(age)) {
-      appState.ui.ageError = "年齢を入力してください";
-      render();
+    const committedAge = commitAgeDraft();
+    if (committedAge === null) {
       return;
     }
-    if (age < 7) {
-      appState.ui.ageError = "現在のMVPは7歳以上向けです。7歳以上に修正してください。";
-      render();
-      return;
-    }
-    appState.visibleQuestionIds = getVisibleQuestionIds(age);
+    visibleQuestions = getVisibleQuestions();
   } else if (!appState.answers[question.id]) {
     showToast("選択肢を選んでください", "未回答");
     return;
@@ -331,6 +420,7 @@ function handleQuestionNext() {
     runEstimate();
     return;
   }
+
   appState.questionIndex += 1;
   appState.updatedAt = new Date().toISOString();
   persistState();
@@ -338,6 +428,7 @@ function handleQuestionNext() {
 }
 
 function handleQuestionBack() {
+  clearPendingAutoAdvance();
   if (appState.questionIndex === 0) {
     setScreen("home");
     return;
@@ -345,6 +436,7 @@ function handleQuestionBack() {
   appState.questionIndex -= 1;
   persistState();
   render();
+  focusAgeInput();
 }
 
 function getPeriodYears(age, from, to) {
@@ -358,67 +450,134 @@ function getPeriodYears(age, from, to) {
   return cappedEnd - from + 1;
 }
 
+function getStabilityWeight(age) {
+  if (age <= 6) {
+    return 1;
+  }
+  if (age <= 12) {
+    return 0.4;
+  }
+  if (age <= 18) {
+    return 0.24;
+  }
+  if (age <= 25) {
+    return 0.14;
+  }
+  return 0.08;
+}
+
+function blendWeekly(baseWeekly, currentWeekly, weight) {
+  return baseWeekly * (1 - weight) + currentWeekly * weight;
+}
+
+function getRecentCorrectionYears(age) {
+  if (age <= 0) {
+    return 0;
+  }
+  if (age <= 6) {
+    return age;
+  }
+  if (age <= 12) {
+    return Math.max(2, age - 4);
+  }
+  if (age <= 18) {
+    return 4;
+  }
+  if (age <= 25) {
+    return 6;
+  }
+  return 8;
+}
+
 function calculateEstimate(answers) {
-  const age = Number.parseInt(answers.age, 10);
-  if (!Number.isFinite(age) || age < 7) {
+  const age = parseAge(answers.age);
+  if (age === null) {
     return null;
   }
 
-  const breakdown = PERIODS.map((period) => {
+  const currentWeekly = WEEKLY_VALUES[answers.current] ?? 0;
+  const stabilityWeight = getStabilityWeight(age);
+  const breakdown = [];
+
+  if (age <= 6) {
+    breakdown.push({
+      id: "currentBase",
+      label: "今の生活ベース",
+      rangeLabel: "0〜6歳",
+      years: age,
+      weekly: currentWeekly,
+      rawWeekly: currentWeekly,
+      subtotal: age * 52 * currentWeekly,
+      source: "current",
+    });
+  }
+
+  for (const period of PERIODS) {
     const years = getPeriodYears(age, period.from, period.to);
-    const weekly = WEEKLY_VALUES[answers[period.id]] ?? 0;
-    const subtotal = years * 52 * weekly;
-    return {
-      ...period,
+    if (!years) {
+      continue;
+    }
+    const rawWeekly = WEEKLY_VALUES[answers[period.id]] ?? currentWeekly;
+    const blendWeight = period.id === "adult" ? 0.32 : stabilityWeight;
+    const weekly = blendWeekly(rawWeekly, currentWeekly, blendWeight);
+    breakdown.push({
+      id: period.id,
+      label: period.label,
+      rangeLabel: period.rangeLabel,
       years,
       weekly,
-      subtotal,
-    };
-  });
+      rawWeekly,
+      subtotal: years * 52 * weekly,
+      source: "period",
+    });
+  }
 
-  const postTeenYears = breakdown
-    .filter((period) => period.id !== "childhood")
-    .reduce((sum, period) => sum + period.years, 0);
-
-  const sandwichBonusWeekly = SANDWICH_BONUS[answers.sandwich] ?? 0;
-  const burgerBonusWeekly = BURGER_BONUS[answers.burger] ?? 0;
-  const sandwichBonus = postTeenYears * 52 * sandwichBonusWeekly;
-  const burgerBonus = postTeenYears * 52 * burgerBonusWeekly;
-
-  const baseTotal = breakdown.reduce((sum, period) => sum + period.subtotal, 0);
-  const total = Math.max(0, Math.round(baseTotal + sandwichBonus + burgerBonus));
+  const correctionYears = getRecentCorrectionYears(age);
+  const sandwichWeekly = SANDWICH_BONUS[answers.sandwich] ?? 0;
+  const burgerWeekly = BURGER_BONUS[answers.burger] ?? 0;
+  const sandwichTotal = correctionYears * 52 * sandwichWeekly;
+  const burgerTotal = correctionYears * 52 * burgerWeekly;
+  const baseTotal = breakdown.reduce((sum, item) => sum + item.subtotal, 0);
+  const total = Math.max(0, Math.round(baseTotal + sandwichTotal + burgerTotal));
   const lower = Math.max(0, Math.round(total * 0.8));
   const upper = Math.max(lower, Math.round(total * 1.25));
 
   const result = {
     total,
     range: { lower, upper },
-    breakdown: breakdown.map((period) => ({
-      id: period.id,
-      label: period.label,
-      years: period.years,
-      weekly: period.weekly,
-      subtotal: Math.round(period.subtotal),
+    breakdown: breakdown.map((item) => ({
+      id: item.id,
+      label: item.label,
+      rangeLabel: item.rangeLabel,
+      years: item.years,
+      weekly: item.weekly,
+      rawWeekly: item.rawWeekly,
+      subtotal: Math.round(item.subtotal),
     })),
     corrections: {
-      sandwichWeekly: sandwichBonusWeekly,
-      sandwichTotal: Math.round(sandwichBonus),
-      burgerWeekly: burgerBonusWeekly,
-      burgerTotal: Math.round(burgerBonus),
-      postTeenYears,
+      recentYears: correctionYears,
+      sandwichWeekly,
+      sandwichTotal: Math.round(sandwichTotal),
+      burgerWeekly,
+      burgerTotal: Math.round(burgerTotal),
     },
+    currentReferenceWeekly: currentWeekly,
   };
 
-  result.comment = getResultComment(result);
+  result.comment = getResultComment(result, age);
   result.shareText = buildShareText(result);
   return result;
 }
 
-function getResultComment(result) {
+function getResultComment(result, age) {
   const total = result.total;
   const sandwich = result.corrections.sandwichTotal;
   const burger = result.corrections.burgerTotal;
-  if (sandwich >= 450 && sandwich > burger) {
+
+  if (age <= 12 && total > 0) {
+    return "まだ序盤でも、意外とちゃんとパンです。今の頻度ベースでも数字になります。";
+  }
+  if (sandwich >= 380 && sandwich > burger) {
     return "サンド系を含めるとしっかり増えます。軽食の積み重ね、あなどれません。";
   }
   if (burger >= 220 && burger >= sandwich) {
@@ -427,11 +586,11 @@ function getResultComment(result) {
   if (total >= 7000) {
     return "思ったよりかなりパンです。人生をパン換算すると、かなりの厚みがあります。";
   }
+  if (total >= 4300) {
+    return "軽食の積み重ね、あなどれません。気づかないうちにしっかり増えています。";
+  }
   if (total <= 1800) {
     return "ごはん派でも意外と積み上がっています。控えめでも、ちゃんとパン史があります。";
-  }
-  if (total >= 4200) {
-    return "軽食の積み重ね、あなどれません。気づかないうちにかなり増えています。";
   }
   return "多いのか少ないのか少し迷う、ちょうどパン的な人生です。";
 }
@@ -439,7 +598,7 @@ function getResultComment(result) {
 function buildShareText(result) {
   const formattedTotal = formatNumber(result.total);
   const variants = [
-    `私のこれまでのパン枚数、${formattedTotal}枚でした。\n${result.comment.replace(/。/g, "。")}\n#パン何枚ったー`,
+    `私のこれまでのパン枚数、${formattedTotal}枚でした。\n${result.comment}\n#パン何枚ったー`,
     `今までに食べたパンを概算したら ${formattedTotal}枚 でした。\n多いのか少ないのかもう分からない。\n#パン何枚ったー`,
   ];
   return result.total >= 5000 ? variants[0] : variants[1];
@@ -451,10 +610,13 @@ function runEstimate() {
     showToast("回答を確認してください", "未完了");
     return;
   }
+
+  clearPendingAutoAdvance();
   appState.loadingEstimate = true;
   appState.currentScreen = "loading";
   persistState();
   render();
+
   window.setTimeout(() => {
     appState.estimate = result;
     appState.loadingEstimate = false;
@@ -464,7 +626,7 @@ function runEstimate() {
     appState.hasSavedData = true;
     persistState();
     render();
-  }, 850);
+  }, 760);
 }
 
 function addFutureCount(optionId) {
@@ -472,6 +634,7 @@ function addFutureCount(optionId) {
   if (!item || !appState.estimate) {
     return;
   }
+
   appState.futureCount = roundToHalf(appState.futureCount + item.delta);
   appState.history = [
     {
@@ -483,10 +646,10 @@ function addFutureCount(optionId) {
       timestamp: new Date().toISOString(),
     },
     ...appState.history,
-  ].slice(0, 12);
+  ].slice(0, 20);
   appState.updatedAt = new Date().toISOString();
   persistState();
-  showToast(`${item.label} を追加`, `+${formatMaybeDecimal(item.delta)}枚`);
+  showToast(`${item.label} を記録`, `+${formatMaybeDecimal(item.delta)}枚`);
   render();
 }
 
@@ -495,6 +658,7 @@ function roundToHalf(value) {
 }
 
 function resetEstimateFlow() {
+  clearPendingAutoAdvance();
   appState.currentScreen = "questions";
   appState.lastCompletedScreen = "questions";
   appState.questionIndex = 0;
@@ -505,8 +669,10 @@ function resetEstimateFlow() {
   appState.history = [];
   appState.updatedAt = new Date().toISOString();
   appState.ui.ageError = "";
+  appState.ui.ageDraft = "";
   persistState();
   render();
+  focusAgeInput();
 }
 
 function resetFutureOnly() {
@@ -514,11 +680,12 @@ function resetFutureOnly() {
   appState.history = [];
   appState.updatedAt = new Date().toISOString();
   persistState();
-  showToast("未来追加分をリセットしました", "0枚");
+  showToast("記録分をリセットしました", "0枚");
   render();
 }
 
 function resetAllData() {
+  clearPendingAutoAdvance();
   window.localStorage.removeItem(STORAGE_KEY);
   const fresh = structuredClone(DEFAULT_STATE);
   Object.assign(appState, fresh);
@@ -590,6 +757,13 @@ function formatNumber(value) {
   return new Intl.NumberFormat("ja-JP").format(value);
 }
 
+function formatDisplayNumber(value) {
+  return new Intl.NumberFormat("ja-JP", {
+    minimumFractionDigits: Number.isInteger(value) ? 0 : 1,
+    maximumFractionDigits: Number.isInteger(value) ? 0 : 1,
+  }).format(value);
+}
+
 function formatMaybeDecimal(value) {
   return Number.isInteger(value) ? `${value}` : value.toFixed(1);
 }
@@ -607,6 +781,21 @@ function formatDateTime(iso) {
     }).format(new Date(iso));
   } catch (_error) {
     return "未保存";
+  }
+}
+
+function formatRecordDate(iso) {
+  if (!iso) {
+    return "";
+  }
+  try {
+    return new Intl.DateTimeFormat("ja-JP", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }).format(new Date(iso));
+  } catch (_error) {
+    return "";
   }
 }
 
@@ -641,7 +830,7 @@ function renderHeader() {
             canNavigate
               ? `
                 <button class="nav-button ${appState.currentScreen === "result" ? "is-active" : ""}" data-action="nav" data-screen="result">結果</button>
-                <button class="nav-button ${appState.currentScreen === "counter" ? "is-active" : ""}" data-action="nav" data-screen="counter">追加</button>
+                <button class="nav-button ${appState.currentScreen === "records" ? "is-active" : ""}" data-action="nav" data-screen="records">記録</button>
                 <button class="nav-button ${appState.currentScreen === "settings" ? "is-active" : ""}" data-action="nav" data-screen="settings">設定</button>
               `
               : `
@@ -657,6 +846,9 @@ function renderHeader() {
 
 function renderHomeScreen() {
   const hasResult = Boolean(appState.estimate);
+  const hasRecordData = appState.futureCount > 0 || appState.history.length > 0;
+  const returnRecordLabel = hasRecordData ? "記録をつづける" : "記録ページを開く";
+
   return `
     <main class="screen-container screen-container--wide">
       <section class="hero-grid">
@@ -674,22 +866,30 @@ function renderHomeScreen() {
           <p class="hero-desc">
             今まで食べてきたパン、だいたい何枚？<br />
             数問に答えるだけで、フェルミ推定で概算します。<br />
-            過去は推定、未来は自分で追加カウント。
+            過去は推定、これからは気が向いた日に記録。
           </p>
           <div class="cta-row">
             <button class="button button--primary" data-action="start-estimate">🍞 推定スタート</button>
-            ${
-              hasResult
-                ? `<button class="button button--ghost" data-action="resume-result">${
-                    appState.futureCount > 0 ? "つづきから見る" : "前回の結果を見る"
-                  }</button>`
-                : ""
-            }
             <div class="inline-note">
               所要時間 約1〜2分<br />
               思ったよりかなりパンです
             </div>
           </div>
+          ${
+            hasResult
+              ? `
+                <div class="stack-row" style="margin-top: 16px;">
+                  <button class="button button--ghost" data-action="resume-result">前回の結果を見る</button>
+                  <button class="button button--ghost" data-action="resume-records">${returnRecordLabel}</button>
+                </div>
+              `
+              : ""
+          }
+          ${
+            appState.updatedAt
+              ? `<div class="inline-note" style="margin-top: 12px;">最終更新 ${formatDateTime(appState.updatedAt)}</div>`
+              : ""
+          }
         </article>
 
         <aside class="card card--soft sample-card">
@@ -714,18 +914,18 @@ function renderHomeScreen() {
       <section class="feature-grid">
         <article class="card feature-card">
           <div class="feature-icon">💬</div>
-          <div class="feature-title">数問に答えるだけ</div>
-          <p class="feature-desc">読むより選ぶ体験を優先。年齢と食習慣を軽く答えるだけです。</p>
+          <div class="feature-title">選ぶだけで進む</div>
+          <p class="feature-desc">質問は1問ずつ。年齢以外は選ぶと短く間を置いて次へ進みます。</p>
         </article>
         <article class="card feature-card">
           <div class="feature-icon">📐</div>
           <div class="feature-title">過去分をフェルミ推定</div>
-          <p class="feature-desc">年代ごとにざっくり換算して、今までのパン枚数を一気に概算します。</p>
+          <p class="feature-desc">今の頻度を基準にしつつ、年代ごとの食習慣からざっくり概算します。</p>
         </article>
         <article class="card feature-card">
-          <div class="feature-icon">➕</div>
-          <div class="feature-title">ここから先は実測</div>
-          <p class="feature-desc">未来ぶんはワンタップ追加。あなたの小麦史はまだ伸びます。</p>
+          <div class="feature-icon">🗂️</div>
+          <div class="feature-title">これからは記録ページへ</div>
+          <p class="feature-desc">サンドイッチを食べた日にふと思い出して開く、それくらいの軽さにしています。</p>
         </article>
       </section>
 
@@ -733,8 +933,8 @@ function renderHomeScreen() {
         <article class="card sub-card">
           <div class="section-title">どうでもいいことを、やたら本気で可視化する</div>
           <p class="sub-text">
-            ただの診断でも、家計簿でもなく、数字を主役にした軽いプロダクトとしてまとめています。
-            黒背景に生成りカード、オレンジ強調で全画面のトーンをそろえています。
+            ただの診断でも、家計簿でもなく、数字とCTAを主役にした軽いプロダクトとしてまとめています。
+            黒背景に生成りカード、オレンジ強調のトーンはそのままです。
           </p>
         </article>
         <article class="card sub-card share-preview-card">
@@ -749,7 +949,7 @@ function renderHomeScreen() {
         </article>
       </section>
 
-      <div class="footer-note">© 2026 パン何枚ったー / 過去は推定、未来は実測</div>
+      <div class="footer-note">© 2026 パン何枚ったー / 過去は推定、これからは記録</div>
     </main>
   `;
 }
@@ -758,63 +958,65 @@ function renderQuestionScreen() {
   const visibleQuestions = getVisibleQuestions();
   clampQuestionIndex();
   const question = visibleQuestions[appState.questionIndex];
-  const currentStep = appState.questionIndex + 1;
-  const progress = Math.round((currentStep / visibleQuestions.length) * 100);
   if (!question) {
     return renderHomeScreen();
   }
 
-  const optionsMarkup =
-    question.type === "age"
-      ? `
-        <div class="age-input-block">
-          <label for="ageInput" class="visually-hidden">年齢</label>
-          <input
-            id="ageInput"
-            class="age-input"
-            inputmode="numeric"
-            pattern="[0-9]*"
-            placeholder="例 28"
-            maxlength="3"
-            value="${escapeHtml(appState.answers.age)}"
-            data-role="age-input"
-            aria-describedby="ageHelp ageError"
-          />
-          <div id="ageHelp" class="inline-note">7歳以上で入力してください。空欄のままは進めません。</div>
-          ${
-            appState.ui.ageError
-              ? `<div id="ageError" class="form-error">${escapeHtml(appState.ui.ageError)}</div>`
-              : ""
-          }
+  const currentStep = appState.questionIndex + 1;
+  const progress = Math.round((currentStep / visibleQuestions.length) * 100);
+  const isAgeQuestion = question.id === "age";
+  const ageValue = appState.ui.ageDraft || appState.answers.age || "";
+
+  const optionsMarkup = isAgeQuestion
+    ? `
+      <div class="age-input-block">
+        <label for="ageInput" class="visually-hidden">年齢</label>
+        <input
+          id="ageInput"
+          class="age-input"
+          type="text"
+          inputmode="numeric"
+          autocomplete="off"
+          enterkeyhint="next"
+          placeholder="例 29"
+          maxlength="3"
+          value="${escapeHtml(ageValue)}"
+          data-role="age-input"
+          aria-describedby="ageHelp ageError"
+        />
+        <div id="ageHelp" class="inline-note">数字だけで入力できます。入力中に画面は切り替わりません。</div>
+        <div id="ageError" class="form-error" data-role="age-error" ${appState.ui.ageError ? "" : "hidden"}>
+          ${escapeHtml(appState.ui.ageError)}
         </div>
-      `
-      : `
-        <div class="option-list" role="radiogroup" aria-label="${escapeHtml(question.title)}">
-          ${question.options
-            .map((option) => {
-              const selected = appState.answers[question.id] === option.value;
-              return `
-                <button
-                  class="option-card ${selected ? "is-selected" : ""}"
-                  type="button"
-                  data-action="pick-option"
-                  data-question="${question.id}"
-                  data-value="${option.value}"
-                  role="radio"
-                  aria-checked="${selected}"
-                >
-                  <span class="option-icon" aria-hidden="true">${option.icon}</span>
-                  <span>
-                    <span class="option-title">${option.label}</span>
-                    <span class="option-sub">${option.sub}</span>
-                  </span>
-                  <span class="option-check" aria-hidden="true"></span>
-                </button>
-              `;
-            })
-            .join("")}
-        </div>
-      `;
+      </div>
+    `
+    : `
+      <div class="option-list" role="radiogroup" aria-label="${escapeHtml(question.title)}">
+        ${question.options
+          .map((option) => {
+            const selected = appState.answers[question.id] === option.value;
+            return `
+              <button
+                class="option-card ${selected ? "is-selected" : ""}"
+                type="button"
+                data-action="pick-option"
+                data-question="${question.id}"
+                data-value="${option.value}"
+                role="radio"
+                aria-checked="${selected}"
+              >
+                <span class="option-icon" aria-hidden="true">${option.icon}</span>
+                <span>
+                  <span class="option-title">${option.label}</span>
+                  <span class="option-sub">${option.sub}</span>
+                </span>
+                <span class="option-check" aria-hidden="true"></span>
+              </button>
+            `;
+          })
+          .join("")}
+      </div>
+    `;
 
   return `
     <main class="screen-container">
@@ -825,30 +1027,16 @@ function renderQuestionScreen() {
             <span class="pill">${currentStep} / ${visibleQuestions.length}</span>
           </div>
           <div class="progress-meta">
-            <span>表示対象の質問だけで進みます</span>
-            <span>${progress}%</span>
+            <span>フェルミ推定フロー</span>
           </div>
           <div class="progress-track" aria-hidden="true">
             <div class="progress-fill" style="width: ${progress}%"></div>
-          </div>
-          <div class="dots" style="margin-top: 12px;" aria-hidden="true">
-            ${visibleQuestions
-              .map((item, index) => {
-                const classes =
-                  index < appState.questionIndex
-                    ? "dot is-done"
-                    : index === appState.questionIndex
-                      ? "dot is-current"
-                      : "dot";
-                return `<span class="${classes}"></span>`;
-              })
-              .join("")}
           </div>
         </div>
 
         <article class="card question-stage">
           <div class="question-panel">
-            <div class="question-meta">${question.number}</div>
+            <div class="question-meta">Q ${String(currentStep).padStart(2, "0")}</div>
             <h1 class="question-title">${question.title}</h1>
             <p class="question-sub">${question.subtitle}</p>
           </div>
@@ -857,11 +1045,17 @@ function renderQuestionScreen() {
 
           <div class="question-footer">
             <div class="inline-note">
-              回答は保持されます。戻ると前の選択もそのまま見えます。
+              ${
+                isAgeQuestion
+                  ? "年齢だけは入力してから進みます。"
+                  : "選ぶと短く間を置いて次へ進みます。戻ると前の回答もそのまま残ります。"
+              }
             </div>
-            <button class="button button--primary" data-action="question-next">
-              ${appState.questionIndex === visibleQuestions.length - 1 ? "推定を実行する" : "つぎへ進む"}
-            </button>
+            ${
+              isAgeQuestion
+                ? `<button class="button button--primary" data-action="question-next">つぎへ進む</button>`
+                : ""
+            }
           </div>
         </article>
       </section>
@@ -876,7 +1070,7 @@ function renderLoadingScreen() {
         <div class="loading-spinner" aria-hidden="true"></div>
         <div class="eyebrow" style="color: var(--brand);">Estimating</div>
         <h1 class="question-title" style="color: var(--text); font-size: clamp(1.8rem, 8vw, 2.4rem);">あなたのパン史を概算中です</h1>
-        <p class="body-text">年代ごとの食習慣と最近の補正をまとめて、食パン換算にしています。</p>
+        <p class="body-text">今の頻度を基準に、年代ごとの食習慣と最近の補正をまとめています。</p>
       </section>
     </main>
   `;
@@ -886,9 +1080,11 @@ function renderResultScreen() {
   if (!appState.estimate) {
     return renderHomeScreen();
   }
+
   const total = appState.estimate.total;
   const breadLoaves = Math.max(1, Math.round(total / 20));
   const biggestPeriod = [...appState.estimate.breakdown].sort((a, b) => b.subtotal - a.subtotal)[0];
+  const correctionsTotal = appState.estimate.corrections.sandwichTotal + appState.estimate.corrections.burgerTotal;
 
   return `
     <main class="screen-container">
@@ -904,11 +1100,15 @@ function renderResultScreen() {
           </div>
           <p class="result-comment">${appState.estimate.comment}</p>
 
+          <div class="result-actions">
+            <button class="button button--primary" data-action="nav" data-screen="records">これからのパンを記録する</button>
+          </div>
+
           <div class="stats-grid">
             <article class="card card--soft stat-card">
-              <div class="stat-icon">🥐</div>
+              <div class="stat-icon">📈</div>
               <div class="stat-value">${biggestPeriod ? formatNumber(biggestPeriod.subtotal) : "0"}</div>
-              <div class="stat-label">いちばん厚かった時期<br />${biggestPeriod ? biggestPeriod.label : "データなし"}</div>
+              <div class="stat-label">いちばんパン期<br />${biggestPeriod ? biggestPeriod.label : "データなし"}</div>
             </article>
             <article class="card card--soft stat-card">
               <div class="stat-icon">🍞</div>
@@ -917,30 +1117,25 @@ function renderResultScreen() {
             </article>
             <article class="card card--soft stat-card">
               <div class="stat-icon">➕</div>
-              <div class="stat-value">${formatNumber(appState.estimate.corrections.sandwichTotal + appState.estimate.corrections.burgerTotal)}</div>
-              <div class="stat-label">最近の補正由来<br />サンド系とバーガー系</div>
+              <div class="stat-value">${formatNumber(correctionsTotal)}</div>
+              <div class="stat-label">最近の補正で増えたぶん<br />直近 ${appState.estimate.corrections.recentYears} 年相当</div>
             </article>
           </div>
 
-          <div class="result-actions">
-            <button class="button button--primary" data-action="nav" data-screen="counter">➕ これからのパンを追加する</button>
+          <article class="card card--soft share-preview-card" style="text-align:left; margin-top: 18px;">
+            <div class="eyebrow" style="color: var(--text-soft);">シェアプレビュー</div>
+            <p class="body-text" style="white-space: pre-line; margin-top: 10px;">${escapeHtml(appState.estimate.shareText)}</p>
+          </article>
 
-            <div class="share-actions">
-              <button class="share-button" data-action="share-x">𝕏 でシェア</button>
-              <button class="share-button" data-action="share-copy">テキストをコピー</button>
-              <button class="share-button" data-action="share-native">共有シート</button>
-            </div>
+          <div class="share-actions" style="margin-top: 14px;">
+            <button class="share-button" data-action="share-x">𝕏 でシェア</button>
+            <button class="share-button" data-action="share-copy">テキストをコピー</button>
+            <button class="share-button" data-action="share-native">共有シート</button>
+          </div>
 
-            <article class="card card--soft share-preview-card" style="text-align:left;">
-              <div class="eyebrow" style="color: var(--text-soft);">シェアプレビュー</div>
-              <p class="body-text" style="white-space: pre-line; margin-top: 10px;">${escapeHtml(appState.estimate.shareText)}</p>
-            </article>
-
-            <div class="tab-row">
-              <button class="tab-button" data-action="nav" data-screen="counter">未来追加</button>
-              <button class="tab-button" data-action="nav" data-screen="settings">設定 / リセット</button>
-              <button class="tab-button" data-action="restart-estimate">最初からやり直す</button>
-            </div>
+          <div class="stack-row" style="margin-top: 14px;">
+            <button class="button button--ghost" data-action="nav" data-screen="settings">設定 / リセット</button>
+            <button class="button button--ghost" data-action="restart-estimate">最初からやり直す</button>
           </div>
         </article>
 
@@ -952,7 +1147,7 @@ function renderResultScreen() {
                 <article class="card sub-card">
                   <div class="eyebrow" style="color: var(--text-soft);">${item.label}</div>
                   <div class="section-title" style="margin-top: 8px;">${formatNumber(item.subtotal)}枚</div>
-                  <p class="body-text" style="margin-top: 6px;">${item.years}年 × 52週 × 週${formatMaybeDecimal(item.weekly)}枚</p>
+                  <p class="body-text" style="margin-top: 6px;">${item.years}年 × 52週 × 週${formatMaybeDecimal(item.weekly)}枚相当</p>
                 </article>
               `,
             )
@@ -963,19 +1158,20 @@ function renderResultScreen() {
   `;
 }
 
-function renderCounterScreen() {
+function renderRecordsScreen() {
   if (!appState.estimate) {
     return renderHomeScreen();
   }
+
   const total = getCurrentTotal();
   return `
     <main class="screen-container">
       <section class="counter-grid">
         <div class="card summary-banner">
-          <div class="counter-total__meta">ここから先は実測です</div>
-          <div class="counter-total__value" data-counter="${total}">${formatNumber(total)}</div>
+          <div class="counter-total__meta">ここから先は記録です</div>
+          <div class="counter-total__value" data-counter="${total}">${formatDisplayNumber(total)}</div>
           <div class="counter-total__unit">枚（現在累計）</div>
-          <p class="body-text">あなたの小麦史はまだ伸びます。今日のパンを足しておきましょう。</p>
+          <p class="body-text">サンドイッチを食べた日に、ふと思い出して足す。そのくらいの軽さで使えます。</p>
           <div class="counter-breakdown">
             <div class="counter-breakdown__item">
               <div class="counter-breakdown__value">${formatNumber(appState.estimate.total)}</div>
@@ -983,17 +1179,17 @@ function renderCounterScreen() {
             </div>
             <div class="counter-breakdown__divider" aria-hidden="true"></div>
             <div class="counter-breakdown__item">
-              <div class="counter-breakdown__value">${formatMaybeDecimal(appState.futureCount)}</div>
-              <div class="counter-breakdown__label">未来追加分</div>
+              <div class="counter-breakdown__value">${formatDisplayNumber(appState.futureCount)}</div>
+              <div class="counter-breakdown__label">記録分</div>
             </div>
           </div>
         </div>
 
         <div class="counter-grid" style="grid-template-columns: 1fr;">
           <article class="card counter-card">
-            <div class="eyebrow" style="color: var(--text-soft);">ワンタップ追加</div>
-            <h2 class="counter-heading" style="margin: 8px 0 6px;">食べたぶんだけ足す</h2>
-            <p class="screen-subcopy">毎日使わせる圧は出さず、たまに押したくなる軽さにしています。</p>
+            <div class="eyebrow" style="color: var(--text-soft);">クイック記録</div>
+            <h2 class="counter-heading" style="margin: 8px 0 6px;">今日のパンを足す</h2>
+            <p class="screen-subcopy">食パン1枚を主ボタンにして、他は2列グリッドでまとめています。</p>
 
             <div class="add-grid" style="margin-top: 16px;">
               ${ADD_OPTIONS.map(
@@ -1010,8 +1206,8 @@ function renderCounterScreen() {
           </article>
 
           <article class="card counter-card history-card">
-            <div class="eyebrow" style="color: var(--text-soft);">直近の追加</div>
-            <h2 class="counter-heading" style="margin: 8px 0 6px;">最低限の履歴</h2>
+            <div class="eyebrow" style="color: var(--text-soft);">最近の記録</div>
+            <h2 class="counter-heading" style="margin: 8px 0 6px;">直近の追加</h2>
             ${
               appState.history.length
                 ? `
@@ -1024,7 +1220,7 @@ function renderCounterScreen() {
                               <div class="history-emoji">${item.icon}</div>
                               <div>
                                 <div class="history-name">${item.label}</div>
-                                <div class="history-date">${formatDateTime(item.timestamp)}</div>
+                                <div class="history-date">${formatRecordDate(item.timestamp)}</div>
                               </div>
                             </div>
                             <div class="history-value">+${formatMaybeDecimal(item.delta)}</div>
@@ -1034,7 +1230,7 @@ function renderCounterScreen() {
                       .join("")}
                   </div>
                 `
-                : `<p class="history-empty" style="margin-top: 12px;">まだ追加はありません。まずは今日のパンからどうぞ。</p>`
+                : `<p class="history-empty" style="margin-top: 12px;">まだ記録はありません。まずは今日のパンからどうぞ。</p>`
             }
           </article>
         </div>
@@ -1046,6 +1242,7 @@ function renderCounterScreen() {
 function renderSettingsScreen() {
   const hasEstimate = Boolean(appState.estimate);
   const answeredCount = Object.entries(appState.answers).filter(([, value]) => Boolean(value)).length;
+
   return `
     <main class="screen-container">
       <section class="settings-grid">
@@ -1061,12 +1258,12 @@ function renderSettingsScreen() {
             <div class="storage-value ${hasEstimate ? "storage-value--accent" : ""}">${hasEstimate ? `${formatNumber(appState.estimate.total)}枚` : "未作成"}</div>
           </div>
           <div class="storage-row">
-            <div class="storage-key">未来追加分</div>
-            <div class="storage-value">${formatMaybeDecimal(appState.futureCount)}枚</div>
+            <div class="storage-key">記録分</div>
+            <div class="storage-value">${formatDisplayNumber(appState.futureCount)}枚</div>
           </div>
           <div class="storage-row">
-            <div class="storage-key">表示対象質問</div>
-            <div class="storage-value">${appState.visibleQuestionIds.length}問</div>
+            <div class="storage-key">記録件数</div>
+            <div class="storage-value">${appState.history.length}件</div>
           </div>
           <div class="storage-row">
             <div class="storage-key">最終更新</div>
@@ -1081,7 +1278,7 @@ function renderSettingsScreen() {
             title: "最初からやり直す",
             sub: "質問回答と推定結果を作り直します",
             body:
-              "回答内容、推定値、未来追加履歴をまとめて初期化し、質問フローの先頭に戻ります。もう一度推定し直したい時の操作です。",
+              "回答内容、推定値、記録履歴をまとめて初期化し、質問フローの先頭に戻ります。もう一度推定し直したい時の操作です。",
             buttonLabel: "最初からやり直す",
             buttonClass: "button button--primary",
             action: "confirm-restart",
@@ -1089,11 +1286,11 @@ function renderSettingsScreen() {
           ${renderAccordionItem({
             id: "future-reset",
             icon: "🧾",
-            title: "未来追加カウントだけリセット",
-            sub: "推定結果は残して、追加ぶんだけ消します",
+            title: "記録だけリセット",
+            sub: "推定結果は残して、記録ぶんだけ消します",
             body:
-              "過去の推定値はそのままにして、ここから先の実測ぶんだけ 0 に戻します。結果画面は維持したい時に使います。",
-            buttonLabel: "未来追加分をリセット",
+              "過去の推定値はそのままにして、記録ページで追加したぶんだけ 0 に戻します。結果は残したい時に使います。",
+            buttonLabel: "記録分をリセット",
             buttonClass: "button button--ghost",
             action: "confirm-future-reset",
           })}
@@ -1103,7 +1300,7 @@ function renderSettingsScreen() {
             title: "全データ削除",
             sub: "localStorage に保存された内容を全削除します",
             body:
-              "回答、推定結果、未来追加、履歴、最終更新、画面状態を含めて完全に削除します。再訪導線も消えます。",
+              "回答、推定結果、記録、履歴、最終更新、画面状態を含めて完全に削除します。再訪導線も消えます。",
             buttonLabel: "全データを削除",
             buttonClass: "button button--danger",
             action: "confirm-all-reset",
@@ -1164,6 +1361,7 @@ function renderToasts() {
 function render() {
   const app = document.querySelector("#app");
   let screenMarkup = "";
+
   switch (appState.currentScreen) {
     case "questions":
       screenMarkup = renderQuestionScreen();
@@ -1174,8 +1372,8 @@ function render() {
     case "result":
       screenMarkup = renderResultScreen();
       break;
-    case "counter":
-      screenMarkup = renderCounterScreen();
+    case "records":
+      screenMarkup = renderRecordsScreen();
       break;
     case "settings":
       screenMarkup = renderSettingsScreen();
@@ -1204,31 +1402,25 @@ function attachEvents() {
       const action = event.currentTarget.dataset.action;
       switch (action) {
         case "start-estimate":
-          appState.currentScreen = "questions";
-          appState.lastCompletedScreen = "questions";
-          appState.questionIndex = 0;
-          persistState();
-          render();
-          focusAgeInput();
+          beginEstimateFlow();
           break;
         case "resume-result":
-          setScreen(appState.futureCount > 0 ? "counter" : "result");
+          setScreen("result");
+          break;
+        case "resume-records":
+          setScreen("records");
           break;
         case "nav":
           setScreen(event.currentTarget.dataset.screen);
           break;
         case "question-next":
           handleQuestionNext();
-          if (appState.currentScreen === "questions") {
-            focusAgeInput();
-          }
           break;
         case "question-back":
           handleQuestionBack();
-          focusAgeInput();
           break;
         case "pick-option":
-          answerQuestion(event.currentTarget.dataset.question, event.currentTarget.dataset.value);
+          answerQuestion(event.currentTarget.dataset.question, event.currentTarget.dataset.value, { autoAdvance: true });
           break;
         case "share-copy":
           copyShareText();
@@ -1251,7 +1443,7 @@ function attachEvents() {
           }
           break;
         case "confirm-future-reset":
-          if (window.confirm("未来追加カウントと履歴だけをリセットしますか？")) {
+          if (window.confirm("記録ページで追加した内容と履歴だけをリセットしますか？")) {
             resetFutureOnly();
           }
           break;
@@ -1274,7 +1466,7 @@ function attachEvents() {
   const ageInput = document.querySelector("[data-role='age-input']");
   if (ageInput) {
     ageInput.addEventListener("input", (event) => {
-      updateAge(event.currentTarget.value);
+      updateAgeDraft(event.currentTarget.value, event.currentTarget);
     });
     ageInput.addEventListener("keydown", (event) => {
       if (event.key === "Enter") {
@@ -1298,10 +1490,12 @@ function animateCounters() {
     if (!Number.isFinite(target)) {
       return;
     }
+
     const previous = Number(element.dataset.renderedCounter);
     if (previous === target) {
       return;
     }
+
     const start = Number.isFinite(previous) ? previous : 0;
     const duration = 700;
     const startTime = performance.now();
@@ -1309,15 +1503,18 @@ function animateCounters() {
     const tick = (now) => {
       const progress = Math.min(1, (now - startTime) / duration);
       const eased = 1 - (1 - progress) ** 3;
-      const current = Math.round(start + (target - start) * eased);
-      element.textContent = formatNumber(current);
+      const rawValue = start + (target - start) * eased;
+      const current = Number.isInteger(target) ? Math.round(rawValue) : roundToHalf(rawValue);
+      element.textContent = formatDisplayNumber(current);
+
       if (progress < 1) {
         window.requestAnimationFrame(tick);
       } else {
-        element.textContent = formatNumber(target);
+        element.textContent = formatDisplayNumber(target);
         element.dataset.renderedCounter = String(target);
       }
     };
+
     window.requestAnimationFrame(tick);
   });
 }
@@ -1336,6 +1533,7 @@ export {
   buildShareText,
   calculateEstimate,
   getPeriodYears,
+  getRecentCorrectionYears,
   getVisibleQuestionIds,
   roundToHalf,
 };
