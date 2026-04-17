@@ -1204,25 +1204,23 @@ function renderResultScreen() {
             <div class="stats-grid result-facts-grid">
               <article class="card card--soft stat-card result-fact-card">
                 <div class="stat-label result-fact-label">ざっくり換算すると</div>
-                <div class="result-fact-copy">
+                <div class="result-fact-body">
                   <span class="result-fact-prefix">食パン</span>
-                  <span class="stat-value result-fact-value result-fact-value--nowrap">${extras.loafKinLabel}</span>
-                  <span class="result-fact-suffix">ぶん</span>
+                  <span class="stat-value result-fact-value result-fact-value--nowrap">${extras.loafKinLabel}ぶん</span>
                 </div>
               </article>
               <article class="card card--soft stat-card result-fact-card">
                 <div class="stat-label result-fact-label">積み重ねると</div>
-                <div class="result-fact-copy">
+                <div class="result-fact-body">
                   <span class="result-fact-prefix">約</span>
                   <span class="stat-value result-fact-value result-fact-value--nowrap">${extras.stackLabel}</span>
                 </div>
               </article>
               <article class="card card--soft stat-card result-fact-card">
                 <div class="stat-label result-fact-label">原料にすると</div>
-                <div class="result-fact-copy">
+                <div class="result-fact-body">
                   <span class="result-fact-prefix">小麦</span>
                   <span class="stat-value result-fact-value result-fact-value--nowrap">${extras.wheatLabel}</span>
-                  <span class="result-fact-suffix">くらい</span>
                 </div>
               </article>
             </div>
@@ -1236,12 +1234,10 @@ function renderResultScreen() {
             <div class="eyebrow" style="color: var(--text-soft);">シェア</div>
             <div class="share-actions share-actions--compact" style="margin-top: 14px;">
               <button class="share-button result-share-button" data-action="share-x">Xでシェア</button>
-              <button class="share-button result-share-button" data-action="share-copy">テキストをコピー</button>
-              <button class="share-button result-share-button" data-action="share-native">共有する</button>
             </div>
           </section>
 
-          <div class="stack-row" style="margin-top: 14px;">
+          <div class="stack-row result-secondary-actions" style="margin-top: 18px;">
             <button class="button button--ghost" data-action="nav" data-screen="settings">設定 / リセット</button>
             <button class="button button--ghost" data-action="restart-estimate">最初からやり直す</button>
           </div>
