@@ -687,14 +687,23 @@ a {
   color: var(--text-mid);
 }
 
+.result-reading {
+  margin-top: 28px;
+  text-align: left;
+}
+
 .result-actions {
   display: grid;
   gap: 14px;
-  margin-top: 22px;
+  margin-top: 26px;
 }
 
 .share-actions {
   grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.share-actions--compact {
+  gap: 10px;
 }
 
 .share-button {
@@ -711,6 +720,10 @@ a {
   margin-top: 18px;
 }
 
+.result-facts-grid {
+  margin-top: 14px;
+}
+
 .stat-value {
   font-family: "Outfit", sans-serif;
   font-size: clamp(1.8rem, 8vw, 2.4rem);
@@ -724,6 +737,29 @@ a {
   line-height: 1.7;
   margin-top: 10px;
   font-size: 0.88rem;
+}
+
+.result-fact-card {
+  text-align: left;
+  min-height: 156px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.result-fact-label {
+  margin-top: 0;
+  font-size: 0.82rem;
+}
+
+.result-fact-value {
+  font-size: clamp(1.9rem, 8vw, 2.7rem);
+  line-height: 1.18;
+}
+
+.share-section {
+  margin-top: 18px;
+  text-align: left;
 }
 
 .sub-grid--single {
@@ -762,6 +798,21 @@ a {
   align-items: start;
 }
 
+.records-stack {
+  display: grid;
+  gap: 16px;
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.records-main-grid {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 16px;
+  align-items: start;
+}
+
 .summary-banner {
   text-align: center;
 }
@@ -769,6 +820,45 @@ a {
 .counter-total__meta {
   color: var(--text-soft);
   margin-bottom: 12px;
+}
+
+.today-log-card {
+  text-align: center;
+}
+
+.today-total {
+  font-family: "Outfit", sans-serif;
+  font-size: clamp(4rem, 16vw, 5.8rem);
+  line-height: 0.92;
+  letter-spacing: -0.06em;
+  font-weight: 900;
+  color: var(--brand);
+  margin-top: 12px;
+}
+
+.today-unit {
+  color: var(--text-mid);
+  font-size: 1rem;
+}
+
+.today-tags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.today-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(249, 115, 22, 0.18);
+  background: rgba(249, 115, 22, 0.08);
+  color: var(--text);
+  font-size: 0.84rem;
+  font-weight: 700;
 }
 
 .counter-breakdown {
@@ -823,6 +913,10 @@ a {
 .add-button:hover {
   transform: translateY(-1px);
   border-color: rgba(249, 115, 22, 0.26);
+}
+
+.add-button:active {
+  transform: translateY(1px) scale(0.99);
 }
 
 .add-button--primary {
@@ -906,6 +1000,43 @@ a {
   font-family: "Outfit", sans-serif;
   font-weight: 800;
   color: var(--brand);
+}
+
+.summary-card {
+  text-align: left;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.summary-stat {
+  padding: 16px;
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(255, 248, 240, 1), rgba(252, 243, 230, 1));
+  border: 1px solid var(--line);
+}
+
+.summary-stat__label {
+  color: var(--text-soft);
+  font-size: 0.8rem;
+}
+
+.summary-stat__value {
+  margin-top: 8px;
+  font-family: "Outfit", sans-serif;
+  font-size: clamp(1.6rem, 6vw, 2.1rem);
+  line-height: 1;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+
+.summary-stat__unit {
+  margin-top: 6px;
+  color: var(--text-mid);
+  font-size: 0.84rem;
 }
 
 .settings-grid {
@@ -1113,6 +1244,8 @@ a {
 @media (max-width: 900px) {
   .hero-grid,
   .counter-grid,
+  .records-main-grid,
+  .summary-grid,
   .share-actions,
   .stats-grid,
   .feature-grid,
@@ -1166,7 +1299,8 @@ a {
 
   .sample-number,
   .result-number,
-  .counter-total__value {
+  .counter-total__value,
+  .today-total {
     font-size: clamp(3rem, 19vw, 4.5rem);
   }
 
@@ -1200,5 +1334,9 @@ a {
   .storage-row {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .today-tags {
+    justify-content: flex-start;
   }
 }

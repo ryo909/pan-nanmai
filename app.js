@@ -598,10 +598,153 @@ function getResultComment(result, age) {
 function buildShareText(result) {
   const formattedTotal = formatNumber(result.total);
   const variants = [
-    `私のこれまでのパン枚数、${formattedTotal}枚でした。\n${result.comment}\n#パン何枚ったー`,
-    `今までに食べたパンを概算したら ${formattedTotal}枚 でした。\n多いのか少ないのかもう分からない。\n#パン何枚ったー`,
+    `今までに食べたパンを概算したら、${formattedTotal}枚でした。\n思ったよりかなりパン。\n#パン何枚ったー`,
+    `自分のパン枚数を調べたら、${formattedTotal}枚でした。\nなんとなく食べてきたパン、ちゃんと多い。\n#パン何枚ったー`,
+    `今までのパン、${formattedTotal}枚。\n数字にすると急に気になる。\n#パン何枚ったー`,
   ];
-  return result.total >= 5000 ? variants[0] : variants[1];
+  return variants[result.total % variants.length];
+}
+
+function formatKin(kin) {
+  if (kin < 100) {
+    return `${kin.toFixed(1)}斤`;
+  }
+  return `${Math.round(kin).toLocaleString("ja-JP")}斤`;
+}
+
+function formatStackHeight(totalSlices) {
+  const stackCm = totalSlices * 2;
+
+  if (stackCm < 100) {
+    return `${Math.round(stackCm).toLocaleString("ja-JP")}cm`;
+  }
+
+  const stackM = stackCm / 100;
+  if (stackM < 100) {
+    return `${stackM.toFixed(1)}m`;
+  }
+  return `${Math.round(stackM).toLocaleString("ja-JP")}m`;
+}
+
+function formatWheatStalks(totalSlices) {
+  const stalks = totalSlices * 30;
+
+  if (stalks < 10000) {
+    return `${Math.round(stalks).toLocaleString("ja-JP")}本`;
+  }
+
+  const man = stalks / 10000;
+  if (man < 100) {
+    return `${man.toFixed(1)}万本`;
+  }
+  return `${Math.round(man).toLocaleString("ja-JP")}万本`;
+}
+
+function getResultExtras(totalSlices) {
+  const safeSlices = Math.max(0, Number(totalSlices) || 0);
+  const loafKinRaw = safeSlices / 6;
+  const stackCmRaw = safeSlices * 2;
+  const wheatStalksRaw = safeSlices * 30;
+
+  return {
+    loafKinRaw,
+    stackCmRaw,
+    wheatStalksRaw,
+    loafKinLabel: formatKin(loafKinRaw),
+    stackLabel: formatStackHeight(safeSlices),
+    wheatLabel: formatWheatStalks(safeSlices),
+  };
+}
+
+function getShareAppUrl() {
+  if (typeof window === "undefined") {
+    return "";
+  }
+
+  try {
+    const current = new URL(window.location.href);
+    return `${current.origin}${current.pathname}`;
+  } catch (_error) {
+    return window.location.href.split(/[?#]/)[0];
+  }
+}
+
+function getSharePayload(result) {
+  const text = result?.shareText ?? "";
+  const url = getShareAppUrl();
+  return {
+    title: "パン何枚ったー",
+    text,
+    url,
+    shareTextWithUrl: url ? `${text}\n\n${url}` : text,
+  };
+}
+
+function isSameLocalDay(left, right) {
+  return (
+    left.getFullYear() === right.getFullYear() &&
+    left.getMonth() === right.getMonth() &&
+    left.getDate() === right.getDate()
+  );
+}
+
+function getTodayHistoryEntries(history) {
+  const today = new Date();
+  return history.filter((item) => {
+    const timestamp = new Date(item.timestamp);
+    return Number.isFinite(timestamp.getTime()) && isSameLocalDay(timestamp, today);
+  });
+}
+
+function getTodaySummary(history) {
+  const todayEntries = getTodayHistoryEntries(history);
+  const total = roundToHalf(todayEntries.reduce((sum, item) => sum + item.delta, 0));
+  return {
+    entries: todayEntries,
+    total,
+  };
+}
+
+function formatTodaySummary(entries) {
+  const parts = entries.slice(0, 3).map((item) => `${item.label} +${formatMaybeDecimal(item.delta)}`);
+  if (entries.length > 3) {
+    parts.push(`ほか${entries.length - 3}件`);
+  }
+  return parts.join(" / ");
+}
+
+function formatHistoryTimestamp(iso) {
+  if (!iso) {
+    return "";
+  }
+
+  const date = new Date(iso);
+  if (!Number.isFinite(date.getTime())) {
+    return "";
+  }
+
+  const now = new Date();
+  const yesterday = new Date(now);
+  yesterday.setDate(now.getDate() - 1);
+
+  const time = new Intl.DateTimeFormat("ja-JP", {
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(date);
+
+  if (isSameLocalDay(date, now)) {
+    return `今日 ${time}`;
+  }
+  if (isSameLocalDay(date, yesterday)) {
+    return `昨日 ${time}`;
+  }
+
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  if (date.getFullYear() === now.getFullYear()) {
+    return `${month}/${day} ${time}`;
+  }
+  return `${date.getFullYear()}/${month}/${day} ${time}`;
 }
 
 function runEstimate() {
@@ -716,8 +859,21 @@ async function copyShareText() {
   if (!appState.estimate) {
     return;
   }
+  const sharePayload = getSharePayload(appState.estimate);
   try {
-    await navigator.clipboard.writeText(appState.estimate.shareText);
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(sharePayload.shareTextWithUrl);
+    } else {
+      const textarea = document.createElement("textarea");
+      textarea.value = sharePayload.shareTextWithUrl;
+      textarea.setAttribute("readonly", "");
+      textarea.style.position = "absolute";
+      textarea.style.left = "-9999px";
+      document.body.append(textarea);
+      textarea.select();
+      document.execCommand("copy");
+      textarea.remove();
+    }
     showToast("シェア文をコピーしました", "コピー完了");
   } catch (_error) {
     showToast("コピーできませんでした", "未対応");
@@ -728,12 +884,13 @@ async function nativeShare() {
   if (!appState.estimate) {
     return;
   }
+  const sharePayload = getSharePayload(appState.estimate);
   if (navigator.share) {
     try {
       await navigator.share({
-        title: "パン何枚ったー",
-        text: appState.estimate.shareText,
-        url: window.location.href,
+        title: sharePayload.title,
+        text: sharePayload.text,
+        url: sharePayload.url,
       });
       showToast("共有シートを開きました", "share");
       return;
@@ -748,8 +905,8 @@ function openXShare() {
   if (!appState.estimate) {
     return;
   }
-  const text = `${appState.estimate.shareText}\n${window.location.href}`;
-  const url = `https://x.com/intent/tweet?text=${encodeURIComponent(text)}`;
+  const sharePayload = getSharePayload(appState.estimate);
+  const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(sharePayload.shareTextWithUrl)}`;
   window.open(url, "_blank", "noopener,noreferrer");
 }
 
@@ -1030,8 +1187,7 @@ function renderResultScreen() {
   }
 
   const total = appState.estimate.total;
-  const breadLoaves = Math.max(1, Math.round(total / 20));
-  const biggestPeriod = [...appState.estimate.breakdown].sort((a, b) => b.subtotal - a.subtotal)[0];
+  const extras = getResultExtras(total);
 
   return `
     <main class="screen-container">
@@ -1043,33 +1199,36 @@ function renderResultScreen() {
           <div class="result-unit">枚（食パン換算）</div>
           <p class="result-comment">${appState.estimate.comment}</p>
 
+          <section class="result-reading">
+            <div class="eyebrow" style="color: var(--text-soft);">数字を別の見方で見ると</div>
+            <div class="stats-grid result-facts-grid">
+              <article class="card card--soft stat-card result-fact-card">
+                <div class="stat-label result-fact-label">ざっくり換算すると</div>
+                <div class="stat-value result-fact-value">食パン ${extras.loafKinLabel} ぶん</div>
+              </article>
+              <article class="card card--soft stat-card result-fact-card">
+                <div class="stat-label result-fact-label">積み重ねると</div>
+                <div class="stat-value result-fact-value">約 ${extras.stackLabel}</div>
+              </article>
+              <article class="card card--soft stat-card result-fact-card">
+                <div class="stat-label result-fact-label">原料にすると</div>
+                <div class="stat-value result-fact-value">小麦 ${extras.wheatLabel} くらい</div>
+              </article>
+            </div>
+          </section>
+
           <div class="result-actions">
-            <button class="button button--primary" data-action="nav" data-screen="records">これからのパンを記録する</button>
+            <button class="button button--primary" data-action="nav" data-screen="records">今日以降のパンを記録する</button>
           </div>
 
-          <div class="stats-grid">
-            <article class="card card--soft stat-card">
-              <div class="stat-icon">📈</div>
-              <div class="stat-value">${biggestPeriod ? formatNumber(biggestPeriod.subtotal) : "0"}</div>
-              <div class="stat-label">いちばんパン期<br />${biggestPeriod ? biggestPeriod.label : "データなし"}</div>
-            </article>
-            <article class="card card--soft stat-card">
-              <div class="stat-icon">🍞</div>
-              <div class="stat-value">${formatNumber(breadLoaves)}</div>
-              <div class="stat-label">食パン何斤ぶん<br />ざっくり ${breadLoaves} 斤</div>
-            </article>
-          </div>
-
-          <article class="card card--soft share-preview-card" style="text-align:left; margin-top: 18px;">
-            <div class="eyebrow" style="color: var(--text-soft);">シェアプレビュー</div>
-            <p class="body-text" style="white-space: pre-line; margin-top: 10px;">${escapeHtml(appState.estimate.shareText)}</p>
-          </article>
-
-          <div class="share-actions" style="margin-top: 14px;">
-            <button class="share-button" data-action="share-x">𝕏 でシェア</button>
+          <section class="share-section">
+            <div class="eyebrow" style="color: var(--text-soft);">シェア</div>
+            <div class="share-actions share-actions--compact" style="margin-top: 14px;">
+              <button class="share-button" data-action="share-x">Xでシェア</button>
             <button class="share-button" data-action="share-copy">テキストをコピー</button>
-            <button class="share-button" data-action="share-native">共有シート</button>
-          </div>
+              <button class="share-button" data-action="share-native">共有する</button>
+            </div>
+          </section>
 
           <div class="stack-row" style="margin-top: 14px;">
             <button class="button button--ghost" data-action="nav" data-screen="settings">設定 / リセット</button>
@@ -1087,32 +1246,40 @@ function renderRecordsScreen() {
   }
 
   const total = getCurrentTotal();
+  const todaySummary = getTodaySummary(appState.history);
+  const recentHistory = appState.history.slice(0, 10);
   return `
     <main class="screen-container">
-      <section class="counter-grid">
-        <div class="card summary-banner">
-          <div class="counter-total__meta">ここから先は記録です</div>
-          <div class="counter-total__value" data-counter="${total}">${formatDisplayNumber(total)}</div>
-          <div class="counter-total__unit">枚（現在累計）</div>
-          <p class="body-text">サンドイッチを食べた日に、ふと思い出して足す。そのくらいの軽さで使えます。</p>
-          <div class="counter-breakdown">
-            <div class="counter-breakdown__item">
-              <div class="counter-breakdown__value">${formatNumber(appState.estimate.total)}</div>
-              <div class="counter-breakdown__label">推定値</div>
-            </div>
-            <div class="counter-breakdown__divider" aria-hidden="true"></div>
-            <div class="counter-breakdown__item">
-              <div class="counter-breakdown__value">${formatDisplayNumber(appState.futureCount)}</div>
-              <div class="counter-breakdown__label">記録分</div>
-            </div>
-          </div>
-        </div>
+      <section class="records-stack">
+        <article class="card today-log-card">
+          <div class="eyebrow" style="color: var(--text-soft);">今日の記録</div>
+          <h1 class="counter-heading" style="margin: 10px 0 4px;">今日のパン</h1>
+          <div class="today-total" data-counter="${todaySummary.total}">${formatDisplayNumber(todaySummary.total)}</div>
+          <div class="today-unit">枚</div>
+          ${
+            todaySummary.entries.length
+              ? `
+                <p class="body-text" style="margin-top: 12px;">${escapeHtml(formatTodaySummary(todaySummary.entries))}</p>
+                <div class="today-tags">
+                  ${todaySummary.entries
+                    .slice(0, 4)
+                    .map(
+                      (item) =>
+                        `<span class="today-tag">${escapeHtml(item.label)} +${formatMaybeDecimal(item.delta)}</span>`,
+                    )
+                    .join("")}
+                  ${todaySummary.entries.length > 4 ? `<span class="today-tag">ほか${todaySummary.entries.length - 4}件</span>` : ""}
+                </div>
+              `
+              : `<p class="body-text" style="margin-top: 12px;">今日はまだ記録していません。</p>`
+          }
+        </article>
 
-        <div class="counter-grid" style="grid-template-columns: 1fr;">
+        <div class="records-main-grid">
           <article class="card counter-card">
             <div class="eyebrow" style="color: var(--text-soft);">クイック記録</div>
-            <h2 class="counter-heading" style="margin: 8px 0 6px;">今日のパンを足す</h2>
-            <p class="screen-subcopy">食パン1枚を主ボタンにして、他は2列グリッドでまとめています。</p>
+            <h2 class="counter-heading" style="margin: 8px 0 6px;">今日食べたパンを足す</h2>
+            <p class="screen-subcopy">食パン1枚を主ボタンにして、今日ぶんをすぐ記録できます。</p>
 
             <div class="add-grid" style="margin-top: 16px;">
               ${ADD_OPTIONS.map(
@@ -1132,10 +1299,10 @@ function renderRecordsScreen() {
             <div class="eyebrow" style="color: var(--text-soft);">最近の記録</div>
             <h2 class="counter-heading" style="margin: 8px 0 6px;">直近の追加</h2>
             ${
-              appState.history.length
+              recentHistory.length
                 ? `
                   <div class="history-list" style="margin-top: 12px;">
-                    ${appState.history
+                    ${recentHistory
                       .map(
                         (item) => `
                           <div class="history-item">
@@ -1143,7 +1310,7 @@ function renderRecordsScreen() {
                               <div class="history-emoji">${item.icon}</div>
                               <div>
                                 <div class="history-name">${item.label}</div>
-                                <div class="history-date">${formatRecordDate(item.timestamp)}</div>
+                                <div class="history-date">${formatHistoryTimestamp(item.timestamp)}</div>
                               </div>
                             </div>
                             <div class="history-value">+${formatMaybeDecimal(item.delta)}</div>
@@ -1157,6 +1324,28 @@ function renderRecordsScreen() {
             }
           </article>
         </div>
+
+        <article class="card counter-card summary-card">
+          <div class="eyebrow" style="color: var(--text-soft);">累計サマリー</div>
+          <h2 class="counter-heading" style="margin: 8px 0 6px;">いまの合計</h2>
+          <div class="summary-grid" style="margin-top: 16px;">
+            <div class="summary-stat">
+              <div class="summary-stat__label">現在累計</div>
+              <div class="summary-stat__value" data-counter="${total}">${formatDisplayNumber(total)}</div>
+              <div class="summary-stat__unit">枚</div>
+            </div>
+            <div class="summary-stat">
+              <div class="summary-stat__label">診断結果</div>
+              <div class="summary-stat__value" data-counter="${appState.estimate.total}">${formatNumber(appState.estimate.total)}</div>
+              <div class="summary-stat__unit">枚</div>
+            </div>
+            <div class="summary-stat">
+              <div class="summary-stat__label">記録で増えたぶん</div>
+              <div class="summary-stat__value" data-counter="${appState.futureCount}">${formatDisplayNumber(appState.futureCount)}</div>
+              <div class="summary-stat__unit">枚</div>
+            </div>
+          </div>
+        </article>
       </section>
     </main>
   `;
@@ -1456,6 +1645,7 @@ export {
   buildShareText,
   calculateEstimate,
   getPeriodYears,
+  getResultExtras,
   getRecentCorrectionYears,
   getVisibleQuestionIds,
   roundToHalf,
