@@ -110,15 +110,12 @@ a {
   letter-spacing: -0.02em;
 }
 
-.brand-sub {
-  font-size: 0.72rem;
-  color: rgba(248, 244, 235, 0.68);
-}
-
 .header-actions {
   display: flex;
   align-items: center;
   gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 .screen-container {
@@ -390,7 +387,6 @@ a {
   background: linear-gradient(90deg, #ffb56f, var(--brand));
 }
 
-.feature-grid,
 .sub-grid,
 .settings-grid,
 .counter-grid,
@@ -400,24 +396,17 @@ a {
   gap: 14px;
 }
 
-.feature-grid {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  margin-top: 22px;
-}
-
 .sub-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   margin-top: 16px;
 }
 
-.feature-card,
 .sub-card,
 .stat-card,
 .history-card {
   padding: 22px;
 }
 
-.feature-icon,
 .stat-icon {
   width: 44px;
   height: 44px;
@@ -429,7 +418,6 @@ a {
   margin-bottom: 12px;
 }
 
-.feature-title,
 .section-title,
 .question-title,
 .result-heading,
@@ -441,7 +429,6 @@ a {
   letter-spacing: -0.02em;
 }
 
-.feature-desc,
 .sub-text,
 .body-text,
 .accordion__body,
@@ -662,7 +649,7 @@ a {
 .question-footer {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   gap: 12px;
   flex-wrap: wrap;
 }
@@ -692,23 +679,11 @@ a {
   margin: 12px 0 10px;
 }
 
-.result-range {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 16px;
-  border-radius: 999px;
-  margin-top: 14px;
-  background: rgba(17, 12, 8, 0.06);
-  color: var(--text-mid);
-  font-size: 0.9rem;
-}
-
 .result-comment {
   max-width: 34rem;
-  margin: 22px auto 0;
+  margin: 18px auto 0;
   font-size: 1.02rem;
-  line-height: 1.9;
+  line-height: 1.7;
   color: var(--text-mid);
 }
 
@@ -731,7 +706,7 @@ a {
 
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 14px;
   margin-top: 18px;
 }
@@ -749,6 +724,19 @@ a {
   line-height: 1.7;
   margin-top: 10px;
   font-size: 0.88rem;
+}
+
+.sub-grid--single {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.sample-number {
+  font-size: clamp(3.7rem, 14vw, 5.6rem);
+}
+
+.result-number {
+  font-size: clamp(5rem, 18vw, 7rem);
+  margin-top: 18px;
 }
 
 .tab-row {

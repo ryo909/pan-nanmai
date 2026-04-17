@@ -5,13 +5,13 @@ const QUESTION_DEFS = [
     id: "age",
     type: "age",
     title: "今、何歳ですか？",
-    subtitle: "年齢は年単位で入力してください。入力後に「次へ」で進みます。",
+    subtitle: "年齢は年単位で入力してください。",
   },
   {
     id: "current",
     type: "choice",
     title: "今の普段の食生活では、パンをどれくらい食べますか？",
-    subtitle: "まずは今の頻度を基準にします。だいたいの体感で大丈夫です。",
+    subtitle: "だいたいの感覚で選んでください。",
     options: [
       { value: "rare", label: "ほぼ食べない", sub: "かなり控えめ", icon: "🍚" },
       { value: "light", label: "週1〜2回くらい", sub: "たまに食べる", icon: "🍞" },
@@ -23,7 +23,7 @@ const QUESTION_DEFS = [
     id: "childhood",
     type: "choice",
     title: "小学生くらいのころ、パンはどれくらい食べていましたか？",
-    subtitle: "6〜12歳ごろの朝食や軽食も含めた感覚で選んでください。",
+    subtitle: "朝食やおやつの感じで選んでください。",
     options: [
       { value: "rare", label: "ほぼ食べなかった", sub: "ごはん寄り", icon: "🍚" },
       { value: "light", label: "週1〜2回くらい", sub: "たまに食べる", icon: "🍞" },
@@ -35,7 +35,7 @@ const QUESTION_DEFS = [
     id: "teen",
     type: "choice",
     title: "中高生くらいのころ、パンはどれくらい食べていましたか？",
-    subtitle: "購買や昼食の軽食も含めた、週あたりの体感で選んでください。",
+    subtitle: "購買や昼食もふくめた感じで選んでください。",
     options: [
       { value: "rare", label: "ほぼ食べなかった", sub: "ごはん中心", icon: "🍚" },
       { value: "light", label: "週1〜2回くらい", sub: "たまに食べる", icon: "🍞" },
@@ -47,7 +47,7 @@ const QUESTION_DEFS = [
     id: "youngAdult",
     type: "choice",
     title: "19〜25歳くらいのころ、パンはどれくらい食べていましたか？",
-    subtitle: "朝食、ランチ、軽食をまとめたざっくりの感覚で大丈夫です。",
+    subtitle: "朝食や軽食込みの感覚で選んでください。",
     options: [
       { value: "rare", label: "ほぼ食べなかった", sub: "かなり控えめ", icon: "🍚" },
       { value: "light", label: "週1〜2回くらい", sub: "たまに食べる", icon: "🍞" },
@@ -59,7 +59,7 @@ const QUESTION_DEFS = [
     id: "adult",
     type: "choice",
     title: "26歳以降、今に近い食生活ではパンをどれくらい食べていますか？",
-    subtitle: "今の傾向にいちばん近い、26歳以降の頻度を選んでください。",
+    subtitle: "26歳以降のだいたいの感じで選んでください。",
     options: [
       { value: "rare", label: "ほぼ食べない", sub: "かなり控えめ", icon: "🍚" },
       { value: "light", label: "週1〜2回くらい", sub: "たまに食べる", icon: "🍞" },
@@ -71,7 +71,7 @@ const QUESTION_DEFS = [
     id: "sandwich",
     type: "choice",
     title: "最近、サンドイッチ・惣菜パン・菓子パンはどれくらい食べますか？",
-    subtitle: "最近寄りの補正として使います。深く考えず体感で選んでください。",
+    subtitle: "深く考えず、最近の感じで選んでください。",
     options: [
       { value: "rare", label: "ほぼ食べない", sub: "補正なし", icon: "🍽️" },
       { value: "light", label: "たまに食べる", sub: "軽め補正", icon: "🥪" },
@@ -82,7 +82,7 @@ const QUESTION_DEFS = [
     id: "burger",
     type: "choice",
     title: "最近、バーガー・ホットドッグ系はどれくらい食べますか？",
-    subtitle: "最近の体感で選んでください。たまのファストフードも含めて大丈夫です。",
+    subtitle: "たまに食べる分もふくめて選んでください。",
     options: [
       { value: "rare", label: "ほぼ食べない", sub: "補正なし", icon: "🥗" },
       { value: "light", label: "たまに食べる", sub: "軽め補正", icon: "🍔" },
@@ -575,24 +575,24 @@ function getResultComment(result, age) {
   const burger = result.corrections.burgerTotal;
 
   if (age <= 12 && total > 0) {
-    return "まだ序盤でも、意外とちゃんとパンです。今の頻度ベースでも数字になります。";
+    return "まだ序盤でも、もうちゃんとパンです。";
   }
   if (sandwich >= 380 && sandwich > burger) {
-    return "サンド系を含めるとしっかり増えます。軽食の積み重ね、あなどれません。";
+    return "軽食まで入れると、かなりパン寄りです。";
   }
   if (burger >= 220 && burger >= sandwich) {
-    return "バーガー系の寄与が効いています。自覚より小麦寄りの人生でした。";
+    return "バーガー込みだと、想像以上にパンでした。";
   }
   if (total >= 7000) {
-    return "思ったよりかなりパンです。人生をパン換算すると、かなりの厚みがあります。";
+    return "かなり多いです。あなたの人生、だいぶパンです。";
   }
   if (total >= 4300) {
-    return "軽食の積み重ね、あなどれません。気づかないうちにしっかり増えています。";
+    return "思ったより多いです。気づけばかなりパンでした。";
   }
   if (total <= 1800) {
-    return "ごはん派でも意外と積み上がっています。控えめでも、ちゃんとパン史があります。";
+    return "控えめでも、ちゃんとパン歴あります。";
   }
-  return "多いのか少ないのか少し迷う、ちょうどパン的な人生です。";
+  return "ほどよく見えて、しっかりパンです。";
 }
 
 function buildShareText(result) {
@@ -819,13 +819,9 @@ function renderHeader() {
       <div class="app-header__inner">
         <div class="brand-lockup">
           <span class="brand-dot" aria-hidden="true"></span>
-          <div>
-            <div class="brand-title">パン何枚ったー</div>
-            <div class="brand-sub">フェルミ推定で、あなたの小麦史を可視化</div>
-          </div>
+          <div class="brand-title">パン何枚ったー</div>
         </div>
         <div class="header-actions">
-          <span class="pill">🍞 フェルミ推定</span>
           ${
             canNavigate
               ? `
@@ -845,18 +841,14 @@ function renderHeader() {
 }
 
 function renderHomeScreen() {
-  const hasResult = Boolean(appState.estimate);
-  const hasRecordData = appState.futureCount > 0 || appState.history.length > 0;
-  const returnRecordLabel = hasRecordData ? "記録をつづける" : "記録ページを開く";
-
   return `
     <main class="screen-container screen-container--wide">
       <section class="hero-grid">
         <article class="card hero-card">
           <div class="row">
-            <span class="badge">フェルミ推定</span>
+            <span class="badge">食パン換算</span>
             <span class="pill">登録不要</span>
-            <span class="pill">localStorage保存</span>
+            <span class="pill">1〜2分</span>
           </div>
           <h1 class="hero-copy">
             <span class="hero-copy__sub">あなたの人生、</span>
@@ -865,8 +857,8 @@ function renderHomeScreen() {
           </h1>
           <p class="hero-desc">
             今まで食べてきたパン、だいたい何枚？<br />
-            数問に答えるだけで、フェルミ推定で概算します。<br />
-            過去は推定、これからは気が向いた日に記録。
+            数問に答えるだけで、ざっくり食パン換算します。<br />
+            思ったよりちゃんとパンです。
           </p>
           <div class="cta-row">
             <button class="button button--primary" data-action="start-estimate">🍞 推定スタート</button>
@@ -875,16 +867,6 @@ function renderHomeScreen() {
               思ったよりかなりパンです
             </div>
           </div>
-          ${
-            hasResult
-              ? `
-                <div class="stack-row" style="margin-top: 16px;">
-                  <button class="button button--ghost" data-action="resume-result">前回の結果を見る</button>
-                  <button class="button button--ghost" data-action="resume-records">${returnRecordLabel}</button>
-                </div>
-              `
-              : ""
-          }
           ${
             appState.updatedAt
               ? `<div class="inline-note" style="margin-top: 12px;">最終更新 ${formatDateTime(appState.updatedAt)}</div>`
@@ -904,39 +886,14 @@ function renderHomeScreen() {
             </div>
             <p class="body-text">
               これは30代・週3〜4回パンを食べる人の推定サンプルです。<br />
-              あなたの数字はもっと大きいかもしれません。
+              あなたの数字は、もっといくかもしれません。
             </p>
             <span class="pill">サンプル値</span>
           </div>
         </aside>
       </section>
 
-      <section class="feature-grid">
-        <article class="card feature-card">
-          <div class="feature-icon">💬</div>
-          <div class="feature-title">選ぶだけで進む</div>
-          <p class="feature-desc">質問は1問ずつ。年齢以外は選ぶと短く間を置いて次へ進みます。</p>
-        </article>
-        <article class="card feature-card">
-          <div class="feature-icon">📐</div>
-          <div class="feature-title">過去分をフェルミ推定</div>
-          <p class="feature-desc">今の頻度を基準にしつつ、年代ごとの食習慣からざっくり概算します。</p>
-        </article>
-        <article class="card feature-card">
-          <div class="feature-icon">🗂️</div>
-          <div class="feature-title">これからは記録ページへ</div>
-          <p class="feature-desc">サンドイッチを食べた日にふと思い出して開く、それくらいの軽さにしています。</p>
-        </article>
-      </section>
-
-      <section class="sub-grid">
-        <article class="card sub-card">
-          <div class="section-title">どうでもいいことを、やたら本気で可視化する</div>
-          <p class="sub-text">
-            ただの診断でも、家計簿でもなく、数字とCTAを主役にした軽いプロダクトとしてまとめています。
-            黒背景に生成りカード、オレンジ強調のトーンはそのままです。
-          </p>
-        </article>
+      <section class="sub-grid sub-grid--single">
         <article class="card sub-card share-preview-card">
           <div class="eyebrow">シェアするとこんな感じ</div>
           <p class="section-title" style="margin-top: 10px;">
@@ -982,9 +939,8 @@ function renderQuestionScreen() {
           maxlength="3"
           value="${escapeHtml(ageValue)}"
           data-role="age-input"
-          aria-describedby="ageHelp ageError"
+          aria-describedby="ageError"
         />
-        <div id="ageHelp" class="inline-note">数字だけで入力できます。入力中に画面は切り替わりません。</div>
         <div id="ageError" class="form-error" data-role="age-error" ${appState.ui.ageError ? "" : "hidden"}>
           ${escapeHtml(appState.ui.ageError)}
         </div>
@@ -1026,9 +982,6 @@ function renderQuestionScreen() {
             <button class="icon-button" data-action="question-back">← もどる</button>
             <span class="pill">${currentStep} / ${visibleQuestions.length}</span>
           </div>
-          <div class="progress-meta">
-            <span>フェルミ推定フロー</span>
-          </div>
           <div class="progress-track" aria-hidden="true">
             <div class="progress-fill" style="width: ${progress}%"></div>
           </div>
@@ -1043,20 +996,15 @@ function renderQuestionScreen() {
 
           <div class="question-panel">${optionsMarkup}</div>
 
-          <div class="question-footer">
-            <div class="inline-note">
-              ${
-                isAgeQuestion
-                  ? "年齢だけは入力してから進みます。"
-                  : "選ぶと短く間を置いて次へ進みます。戻ると前の回答もそのまま残ります。"
-              }
-            </div>
-            ${
-              isAgeQuestion
-                ? `<button class="button button--primary" data-action="question-next">つぎへ進む</button>`
-                : ""
-            }
-          </div>
+          ${
+            isAgeQuestion
+              ? `
+                <div class="question-footer">
+                  <button class="button button--primary" data-action="question-next">つぎへ進む</button>
+                </div>
+              `
+              : ""
+          }
         </article>
       </section>
     </main>
@@ -1070,7 +1018,7 @@ function renderLoadingScreen() {
         <div class="loading-spinner" aria-hidden="true"></div>
         <div class="eyebrow" style="color: var(--brand);">Estimating</div>
         <h1 class="question-title" style="color: var(--text); font-size: clamp(1.8rem, 8vw, 2.4rem);">あなたのパン史を概算中です</h1>
-        <p class="body-text">今の頻度を基準に、年代ごとの食習慣と最近の補正をまとめています。</p>
+        <p class="body-text">いい感じに食パン換算しています。</p>
       </section>
     </main>
   `;
@@ -1084,20 +1032,15 @@ function renderResultScreen() {
   const total = appState.estimate.total;
   const breadLoaves = Math.max(1, Math.round(total / 20));
   const biggestPeriod = [...appState.estimate.breakdown].sort((a, b) => b.subtotal - a.subtotal)[0];
-  const correctionsTotal = appState.estimate.corrections.sandwichTotal + appState.estimate.corrections.burgerTotal;
 
   return `
     <main class="screen-container">
       <section class="result-layout">
         <article class="card result-card">
-          <span class="badge">推定完了</span>
+          <span class="badge">結果</span>
           <div class="result-heading">あなたのこれまでのパン枚数</div>
-          <div class="eyebrow" style="margin-top: 18px; color: var(--text-soft);">推定パン摂取枚数</div>
           <div class="result-number" data-counter="${total}">${formatNumber(total)}</div>
           <div class="result-unit">枚（食パン換算）</div>
-          <div class="result-range">
-            誤差レンジ: ${formatNumber(appState.estimate.range.lower)}〜${formatNumber(appState.estimate.range.upper)}枚くらい
-          </div>
           <p class="result-comment">${appState.estimate.comment}</p>
 
           <div class="result-actions">
@@ -1113,12 +1056,7 @@ function renderResultScreen() {
             <article class="card card--soft stat-card">
               <div class="stat-icon">🍞</div>
               <div class="stat-value">${formatNumber(breadLoaves)}</div>
-              <div class="stat-label">食パン1斤換算の目安<br />ざっくり ${breadLoaves} 斤</div>
-            </article>
-            <article class="card card--soft stat-card">
-              <div class="stat-icon">➕</div>
-              <div class="stat-value">${formatNumber(correctionsTotal)}</div>
-              <div class="stat-label">最近の補正で増えたぶん<br />直近 ${appState.estimate.corrections.recentYears} 年相当</div>
+              <div class="stat-label">食パン何斤ぶん<br />ざっくり ${breadLoaves} 斤</div>
             </article>
           </div>
 
@@ -1138,21 +1076,6 @@ function renderResultScreen() {
             <button class="button button--ghost" data-action="restart-estimate">最初からやり直す</button>
           </div>
         </article>
-
-        <section class="sub-grid">
-          ${appState.estimate.breakdown
-            .filter((item) => item.years > 0)
-            .map(
-              (item) => `
-                <article class="card sub-card">
-                  <div class="eyebrow" style="color: var(--text-soft);">${item.label}</div>
-                  <div class="section-title" style="margin-top: 8px;">${formatNumber(item.subtotal)}枚</div>
-                  <p class="body-text" style="margin-top: 6px;">${item.years}年 × 52週 × 週${formatMaybeDecimal(item.weekly)}枚相当</p>
-                </article>
-              `,
-            )
-            .join("")}
-        </section>
       </section>
     </main>
   `;
